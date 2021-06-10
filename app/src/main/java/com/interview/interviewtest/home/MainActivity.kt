@@ -24,7 +24,10 @@ import com.interview.interviewtest.R
 import com.interview.interviewtest.data.PostEntity
 import com.interview.interviewtest.data.PostModel
 import com.interview.interviewtest.db.AppDatabase
+
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity(), HomeAdapter.HomeListener {
@@ -52,9 +55,12 @@ class MainActivity : AppCompatActivity(), HomeAdapter.HomeListener {
         }
         else
         {
-            var postList: List<PostEntity>? =db.taskDao()?.getAllPosts()
+            lateinit var postList: List<PostEntity>
+            GlobalScope.launch {
+                 postList=db.taskDao().getAllPosts()
+            }
 
-            if(postList?.size!! >0)
+            if(postList.size >0)
             {
                 lateinit var listPost: ArrayList<PostModel>
                 for (post in postList) {
@@ -99,7 +105,10 @@ class MainActivity : AppCompatActivity(), HomeAdapter.HomeListener {
 
                 for (i in it) {
                     var postModel:PostModel=i
-                    db.taskDao()?.savePosts(PostEntity(postModel.id, postModel.brand,postModel.name, postModel.price,postModel.productLink, postModel.imageLink))
+                    GlobalScope.launch {
+                        db.taskDao()?.savePosts(PostEntity(postModel.id, postModel.brand,postModel.name, postModel.price,postModel.productLink, postModel.imageLink))
+                    }
+
                 }
 
             } else {
